@@ -2,7 +2,7 @@
 
 A fully interactive, customizable birthday surprise page with a disguised clicker game that reveals the birthday message only after the recipient earns it.
 
-**Live demo:** [chrissy.mivator.com](https://chrissy.mivator.com)
+**Live demo:** [chrissy.github.com](https://sahandsame.github.io/Birthday-Website-Gift/)
 
 ---
 
