@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>A challenge awaits...</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800&family=Manrope:wght@400;500;600&family=Space_Grotesk:wght@500;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#6200bc",
+                        "secondary-fixed": "#ffd8e7",
+                        "primary-fixed-dim": "#d8b9ff",
+                        "surface-container-lowest": "#060e20",
+                        "primary-fixed": "#eddcff",
+                        "secondary": "#ffafd3",
+                        "primary": "#d8b9ff",
+                        "primary-container": "#ae72ff",
+                        "on-error": "#690005",
+                        "on-error-container": "#ffdad6",
+                        "on-primary": "#450086",
+                        "surface-bright": "#31394d",
+                        "tertiary-fixed": "#b7eaff",
+                        "on-surface": "#dae2fd",
+                        "inverse-primary": "#7e28df",
+                        "on-tertiary-fixed-variant": "#004e60",
+                        "on-tertiary-fixed": "#001f28",
+                        "inverse-surface": "#dae2fd",
+                        "secondary-container": "#85145a",
+                        "on-secondary-container": "#ff93c8",
+                        "outline-variant": "#4c4355",
+                        "on-surface-variant": "#cec2d7",
+                        "error-container": "#93000a",
+                        "surface": "#0b1326",
+                        "on-tertiary": "#003543",
+                        "outline": "#978da0",
+                        "surface-container-highest": "#2d3449",
+                        "error": "#ffb4ab",
+                        "background": "#0b1326",
+                        "surface-container-low": "#131b2e",
+                        "surface-dim": "#0b1326",
+                        "surface-container": "#171f33",
+                        "tertiary-fixed-dim": "#4cd6ff",
+                        "tertiary": "#4cd6ff",
+                        "on-secondary": "#620040",
+                        "on-secondary-fixed-variant": "#85145a",
+                        "on-secondary-fixed": "#3d0026",
+                        "on-background": "#dae2fd",
+                        "surface-container-high": "#222a3d",
+                        "surface-tint": "#d8b9ff",
+                        "secondary-fixed-dim": "#ffafd3",
+                        "on-primary-fixed": "#290055",
+                        "surface-variant": "#2d3449",
+                        "on-tertiary-container": "#002e3a",
+                        "tertiary-container": "#009dc1",
+                        "inverse-on-surface": "#283044",
+                        "on-primary-container": "#3c0076"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Epilogue"],
+                        "body": ["Manrope"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            background-color: #0b1326;
+            color: #dae2fd;
+            font-family: 'Manrope', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* ════════════════════════════════
+           GAME OVERLAY
+        ════════════════════════════════ */
+        #game-overlay {
+            position: fixed;
+            inset: 0;
+            background: #060e20;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        #game-overlay.hide {
+            opacity: 0;
+            transform: scale(1.05);
+            pointer-events: none;
+        }
+
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem;
+            max-width: 36rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        #game-eyebrow {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #4c4355;
+        }
+
+        #game-title {
+            font-family: 'Epilogue', sans-serif;
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 800;
+            color: #dae2fd;
+            line-height: 1.1;
+        }
+
+        #game-subtitle {
+            font-family: 'Manrope', sans-serif;
+            font-size: 1.05rem;
+            color: #978da0;
+            line-height: 1.6;
+            max-width: 26rem;
+        }
+
+        /* Progress bar */
+        #progress-wrap {
+            width: 100%;
+            max-width: 22rem;
+            height: 8px;
+            background: #1a2238;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        #progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ae72ff, #ffafd3);
+            border-radius: 999px;
+            transition: width 0.2s ease;
+        }
+        #progress-label {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            color: #6c6278;
+            letter-spacing: 0.1em;
+        }
+
+        /* Game button */
+        #game-btn {
+            font-family: 'Epilogue', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            padding: 1rem 3rem;
+            border-radius: 999px;
+            border: none;
+            background: linear-gradient(135deg, #ae72ff, #d8b9ff);
+            color: #290055;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.08s ease, box-shadow 0.15s ease;
+            box-shadow: 0 0 0 0 rgba(174,114,255,0.4);
+        }
+        #game-btn:active { transform: scale(0.93); }
+        #game-btn.btn-shake {
+            animation: gameBtnShake 0.25s ease;
+        }
+        @keyframes gameBtnShake {
+            0%,100% { transform: translateX(0) rotate(0deg); }
+            25%      { transform: translateX(-5px) rotate(-3deg); }
+            75%      { transform: translateX(5px) rotate(3deg); }
+        }
+        #game-btn.btn-glow {
+            box-shadow: 0 0 30px 8px rgba(174,114,255,0.55);
+        }
+
+        #game-msg {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffafd3;
+            min-height: 1.5rem;
+            transition: opacity 0.3s;
+        }
+
+        /* Win screen inside overlay */
+        #win-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        #win-title {
+            font-family: 'Epilogue', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 800;
+            background: linear-gradient(90deg, #d8b9ff, #ffafd3, #4cd6ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.1;
+        }
+        #win-sub {
+            font-family: 'Manrope', sans-serif;
+            font-size: 1.1rem;
+            color: #cec2d7;
+        }
+
+        /* ════════════════════════════════
+           BIRTHDAY PAGE
+        ════════════════════════════════ */
+        #bday-page {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.9s ease 0.3s, transform 0.9s ease 0.3s;
+        }
+        #bday-page.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Confetti canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Balloons */
+        .balloon {
+            position: fixed;
+            font-size: 2.5rem;
+            pointer-events: none;
+            z-index: 9998;
+            animation: floatUp linear forwards;
+            user-select: none;
+        }
+        @keyframes floatUp {
+            0%   { transform: translateY(0) rotate(-6deg); opacity: 1; }
+            50%  { transform: translateY(-42vh) rotate(6deg); opacity: 1; }
+            100% { transform: translateY(-115vh) rotate(-4deg); opacity: 0; }
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(4rem);
+            background: rgba(174,114,255,0.18);
+            border: 1px solid rgba(216,185,255,0.35);
+            backdrop-filter: blur(14px);
+            color: #eddcff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.8rem 2rem;
+            border-radius: 999px;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* Profile wiggle */
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            20%       { transform: rotate(-12deg) scale(1.09); }
+            50%       { transform: rotate(12deg) scale(1.09); }
+            80%       { transform: rotate(-6deg) scale(1.04); }
+        }
+        .profile-wiggle { animation: wiggle 0.55s ease; }
+
+        /* Nav icon bounce */
+        @keyframes iconBounce {
+            0%, 100% { transform: scale(0.95) rotate(0deg); }
+            35%       { transform: scale(1.45) rotate(20deg); }
+            70%       { transform: scale(0.85) rotate(-12deg); }
+        }
+        .icon-bounce { animation: iconBounce 0.5s ease forwards; }
+
+        /* Rainbow title */
+        @keyframes rainbowSlide {
+            0%   { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        .rainbow-active {
+            background: linear-gradient(90deg,#d8b9ff,#ffafd3,#4cd6ff,#ae72ff,#ff93c8,#d8b9ff) !important;
+            background-size: 200% auto !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            color: transparent !important;
+            animation: rainbowSlide 1.2s linear infinite !important;
+        }
+
+        /* Secret message */
+        #secret-msg {
+            display: none;
+            text-align: center;
+            font-family: 'Epilogue', sans-serif;
+            font-size: 1.05rem;
+            color: #ffafd3;
+            margin-top: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255,175,211,0.08);
+            border: 1px solid rgba(255,175,211,0.2);
+            border-radius: 1rem;
+            max-width: 28rem;
+        }
+
+        /* Cursor sparkles */
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9997;
+            font-size: 1.1rem;
+            animation: sparkleUp 0.8s ease forwards;
+            user-select: none;
+        }
+        @keyframes sparkleUp {
+            0%   { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-60px) scale(0.3); opacity: 0; }
+        }
+
+        /* Button pulse */
+        @keyframes btnPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(216,185,255,0.5); }
+            50%       { box-shadow: 0 0 40px 12px rgba(216,185,255,0.35); }
+        }
+        .btn-chaos { animation: btnPulse 1s ease infinite; }
+
+        /* Birthday page entrance */
+        @keyframes slideInCard {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .bday-card-enter {
+            animation: slideInCard 0.7s ease both;
+        }
+    </style>
+</head>
+
+<body class="bg-surface text-on-surface">
+
+<!-- ═══════════════════════════════════════════════
+     GAME OVERLAY — Chrissy sees this first
+════════════════════════════════════════════════ -->
+<div id="game-overlay">
+    <!-- Normal game state -->
+    <div id="game-container">
+        <div id="game-eyebrow">??? · mystery · ???</div>
+        <div id="game-title">Psst.<br>Chrissy. 👀</div>
+        <div id="game-subtitle">
+            Someone left something for you.<br>
+            But you gotta <strong style="color:#d8b9ff">earn</strong> it first. 😈
+        </div>
+
+        <div id="progress-wrap">
+            <div id="progress-fill"></div>
+        </div>
+        <div id="progress-label">0 / 30</div>
+
+        <button id="game-btn">TAP TO UNLOCK</button>
+
+        <div id="game-msg"></div>
+    </div>
+
+    <!-- Win state (shown instead) -->
+    <div id="win-screen">
+        <div id="win-title">YOU DID IT! 🎉</div>
+        <div id="win-sub">Unlocking your surprise...</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     BIRTHDAY PAGE
+════════════════════════════════════════════════ -->
+<canvas id="confetti-canvas"></canvas>
+<div id="toast"></div>
+
+<div id="bday-page">
+    <!-- TopNavBar -->
+    <nav class="fixed top-0 w-full z-50 bg-[#0b1326]/80 backdrop-blur-md">
+        <div class="flex justify-between items-center px-6 py-4 max-w-4xl mx-auto">
+            <div id="nav-title" class="text-xl font-bold text-[#d8b9ff] font-['Epilogue'] tracking-tight">
+                Happy Birthday, Chrissy 🎂
+            </div>
+            <div class="flex items-center gap-4">
+                <span id="icon-celebration"
+                    class="material-symbols-outlined text-[#d8b9ff] scale-95 active:scale-90 duration-200 cursor-pointer hover:text-[#ffafd3] transition-colors"
+                    data-icon="celebration">celebration</span>
+                <span id="icon-cake"
+                    class="material-symbols-outlined text-[#d8b9ff] scale-95 active:scale-90 duration-200 cursor-pointer hover:text-[#ffafd3] transition-colors"
+                    data-icon="cake">cake</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="relative min-h-screen pt-24 pb-12 px-6 flex flex-col items-center">
+        <!-- Background glows -->
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-10"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-secondary/10 rounded-full blur-[100px] -z-10"></div>
+        <div class="absolute top-2/3 left-1/3 w-64 h-64 bg-tertiary/8 rounded-full blur-[90px] -z-10"></div>
+
+        <!-- Hero -->
+        <section class="max-w-2xl w-full text-center mt-12 mb-16 bday-card-enter" style="animation-delay:0.1s">
+            <div class="relative inline-block mb-10">
+                <div id="profile-ring"
+                    class="w-48 h-48 md:w-56 md:h-56 rounded-full p-1 bg-gradient-to-tr from-primary via-secondary to-tertiary shadow-2xl cursor-pointer select-none"
+                    title="Click me!">
+                    <img id="profile-img" alt="Chrissy's profile picture"
+                        class="w-full h-full object-cover rounded-full"
+                        src="https://avatars.githubusercontent.com/u/68145571?v=4" />
+                </div>
+                <div class="absolute -bottom-2 -right-2 px-4 py-2 bg-surface-container-high rounded-full shadow-lg">
+                    <span id="badge-text" class="font-label text-xs uppercase tracking-widest text-secondary font-bold">🎉 B-Day Boss!</span>
+                </div>
+            </div>
+
+            <h1 class="font-headline text-5xl md:text-7xl font-extrabold tracking-tight text-on-surface mb-6">
+                Happy Birthday,<br>
+                <span id="name-span" class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-container">Chrissy!</span>
+            </h1>
+            <p id="hero-subtitle" class="font-body text-lg md:text-xl text-on-surface-variant leading-relaxed max-w-xl mx-auto">
+                You unlocked it. 🎉 Celebrating another incredible year of your journey — wishing you a day as brilliant as the code you write and as exciting as a flawless Anno city.
+            </p>
+        </section>
+
+        <!-- Interests -->
+        <section class="w-full max-w-xl mb-12 bday-card-enter" style="animation-delay:0.25s">
+            <div class="bg-[#131b2e] rounded-xl p-8 flex flex-col md:flex-row justify-between items-center gap-8 relative overflow-hidden border border-[#2d3449]/60">
+                <div class="absolute top-0 left-0 w-1 h-full bg-tertiary/40"></div>
+                <div class="text-center md:text-left">
+                    <div class="font-label text-[10px] uppercase tracking-[0.2em] text-outline mb-4">Passion &amp; Play</div>
+                    <div id="interests-list" class="flex flex-wrap justify-center md:justify-start gap-5 mt-2">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-tertiary text-sm">terminal</span>
+                            <span class="font-body text-sm font-medium">OSS Developer</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-tertiary text-sm">sports_esports</span>
+                            <span class="font-body text-sm font-medium">Anno &amp; Fortnite</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-tertiary text-sm">location_on</span>
+                            <span class="font-body text-sm font-medium">Austria 🇦🇹</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <div class="w-3 h-3 rounded-sm bg-primary/40 rotate-45"></div>
+                    <div class="w-3 h-3 rounded-full bg-secondary/40"></div>
+                    <div class="w-3 h-3 rounded-sm bg-tertiary/40 -rotate-12"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fun stats row -->
+        <section class="w-full max-w-xl mb-16 bday-card-enter" style="animation-delay:0.4s">
+            <div id="stats-grid" class="grid grid-cols-3 gap-4">
+                <div class="bg-[#131b2e] rounded-xl p-4 text-center border border-[#2d3449]/60">
+                    <div class="text-2xl font-['Epilogue'] font-extrabold text-primary">∞</div>
+                    <div class="text-[11px] font-['Space_Grotesk'] uppercase tracking-widest text-outline mt-1">Lines of Code</div>
+                </div>
+                <div class="bg-[#131b2e] rounded-xl p-4 text-center border border-[#2d3449]/60">
+                    <div class="text-2xl font-['Epilogue'] font-extrabold text-secondary">1</div>
+                    <div class="text-[11px] font-['Space_Grotesk'] uppercase tracking-widest text-outline mt-1">Chrissy</div>
+                </div>
+                <div class="bg-[#131b2e] rounded-xl p-4 text-center border border-[#2d3449]/60">
+                    <div class="text-2xl font-['Epilogue'] font-extrabold text-tertiary">🏆</div>
+                    <div class="text-[11px] font-['Space_Grotesk'] uppercase tracking-widest text-outline mt-1">Legend Status</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <div class="flex flex-col items-center gap-6 bday-card-enter" style="animation-delay:0.55s">
+            <button id="cheers-btn"
+                class="px-10 py-4 rounded-full bg-gradient-to-r from-primary to-primary-container text-on-primary font-headline font-bold text-lg hover:shadow-[0_0_30px_rgba(216,185,255,0.4)] transition-all scale-100 active:scale-95">
+                Cheers to you! 🥂
+            </button>
+            <div id="secret-msg"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#0b1326] w-full py-12">
+        <div class="flex flex-col items-center gap-3 w-full">
+            <p id="footer-text" class="font-['Space_Grotesk'] text-sm uppercase tracking-widest text-[#d8b9ff]">
+                Built with love for Tomato6966
+            </p>
+            <p class="font-['Manrope'] text-xs text-outline">Happy Birthday, Chrissy 🎂</p>
+        </div>
+    </footer>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════ -->
+<script>
+// ── Config loader ────────────────────────────────────────────────────────────
+async function loadConfig() {
+    try {
+        const res = await fetch('./config.json');
+        if (!res.ok) return null;
+        return await res.json();
+    } catch { return null; }
+}
+
+function applyConfig(cfg) {
+    if (!cfg) return;
+    const name = cfg.name || 'Friend';
+
+    // Nav + tab title (game title stays neutral until reveal)
+    const navTitle = document.getElementById('nav-title');
+    if (navTitle) navTitle.textContent = `Happy Birthday, ${name} 🎂`;
+
+    // Avatar
+    const profileImg = document.getElementById('profile-img');
+    if (profileImg) {
+        if (cfg.avatar_url) profileImg.src = cfg.avatar_url;
+        profileImg.alt = `${name}'s profile picture`;
+    }
+
+    // Badge
+    const badge = document.getElementById('badge-text');
+    if (badge && cfg.badge) badge.textContent = cfg.badge;
+
+    // Name in heading
+    const nameSpanEl = document.getElementById('name-span');
+    if (nameSpanEl) nameSpanEl.textContent = `${name}!`;
+
+    // Hero subtitle
+    const subtitleEl = document.getElementById('hero-subtitle');
+    if (subtitleEl && cfg.subtitle) subtitleEl.textContent = cfg.subtitle;
+
+    // Interests
+    if (Array.isArray(cfg.interests) && cfg.interests.length) {
+        const container = document.getElementById('interests-list');
+        if (container) {
+            container.innerHTML = cfg.interests.map(i =>
+                `<div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-tertiary text-sm">${i.icon}</span>
+                    <span class="font-body text-sm font-medium">${i.label}</span>
+                </div>`
+            ).join('');
+        }
+    }
+
+    // Stats
+    if (Array.isArray(cfg.stats) && cfg.stats.length) {
+        const grid = document.getElementById('stats-grid');
+        if (grid) {
+            grid.innerHTML = cfg.stats.map(s =>
+                `<div class="bg-[#131b2e] rounded-xl p-4 text-center border border-[#2d3449]/60">
+                    <div class="text-2xl font-['Epilogue'] font-extrabold text-${s.color || 'primary'}">${s.value}</div>
+                    <div class="text-[11px] font-['Space_Grotesk'] uppercase tracking-widest text-outline mt-1">${s.label}</div>
+                </div>`
+            ).join('');
+        }
+    }
+
+    // Footer
+    const footerEl = document.getElementById('footer-text');
+    if (footerEl && cfg.footer) footerEl.textContent = cfg.footer;
+
+    // Game overlay text
+    if (cfg.game) {
+        const gameTitle = document.getElementById('game-title');
+        if (gameTitle && cfg.game.title)
+            gameTitle.innerHTML = cfg.game.title.replace(/\{name\}/g, name).replace(/\n/g, '<br>');
+
+        const gameSub = document.getElementById('game-subtitle');
+        if (gameSub && cfg.game.subtitle) {
+            gameSub.innerHTML = cfg.game.subtitle
+                .replace(/\{name\}/g, name)
+                .replace(/\n/g, '<br>');
+        }
+
+        if (cfg.game.clicks_needed && Number.isInteger(cfg.game.clicks_needed))
+            window._GAME_TARGET = cfg.game.clicks_needed;
+
+        // Win screen text
+        const wtEl = document.getElementById('win-title');
+        if (wtEl && cfg.game.win_title) wtEl.textContent = cfg.game.win_title.replace(/\{name\}/g, name);
+        const wsEl = document.getElementById('win-sub');
+        if (wsEl && cfg.game.win_subtitle) wsEl.textContent = cfg.game.win_subtitle.replace(/\{name\}/g, name);
+    }
+
+    // Store full config + key values for initPage
+    window._CFG      = cfg;
+    window._CFG_NAME = name;
+    if (cfg.secret_message) window._CFG_SECRET = cfg.secret_message;
+}
+
+// Bootstrap: load config then initialise everything
+(async () => {
+    const cfg = await loadConfig();
+    applyConfig(cfg);
+    initPage();
+})();
+
+// ── Confetti engine ───────────────────────────────────────────────────────────
+const canvas = document.getElementById('confetti-canvas');
+const ctx    = canvas.getContext('2d');
+let particles = [], animFrame = null;
+
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const COLORS = ['#d8b9ff','#ffafd3','#4cd6ff','#ae72ff','#ff93c8','#eddcff','#b7eaff','#ffffff'];
+
+function spawnConfetti(n, cx, cy) {
+    for (let i = 0; i < n; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 9;
+        particles.push({
+            x:     cx ?? Math.random() * canvas.width,
+            y:     cy ?? -10,
+            vx:    Math.cos(angle) * speed * (cx != null ? 1 : 0.3),
+            vy:    Math.sin(angle) * speed * (cy != null ? 1 : -1) + (cy != null ? -5 : 2),
+            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            size:  5 + Math.random() * 8,
+            rot:   Math.random() * 360,
+            rotV:  (Math.random() - 0.5) * 9,
+            shape: Math.random() > 0.5 ? 'rect' : 'circle',
+            life:  1,
+            decay: 0.006 + Math.random() * 0.012,
+        });
+    }
+    if (!animFrame) runLoop();
+}
+
+function runLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        p.vy += 0.18; p.vx *= 0.995;
+        p.rot += p.rotV; p.life -= p.decay;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.color;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot * Math.PI / 180);
+        if (p.shape === 'rect') ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+        else { ctx.beginPath(); ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2); ctx.fill(); }
+        ctx.restore();
+    });
+    particles = particles.filter(p => p.life > 0 && p.y < canvas.height + 80);
+    animFrame = particles.length > 0 ? requestAnimationFrame(runLoop) : null;
+}
+
+// ── Balloons ──────────────────────────────────────────────────────────────────
+const BALLOONS = ['🎈','🎉','🎊','🥳','✨','🎀','💜','💖','🌟','🎁'];
+function spawnBalloons(n) {
+    for (let i = 0; i < n; i++) {
+        setTimeout(() => {
+            const el = document.createElement('span');
+            el.className = 'balloon';
+            el.textContent = BALLOONS[Math.floor(Math.random() * BALLOONS.length)];
+            el.style.left = (3 + Math.random() * 94) + 'vw';
+            const dur = 3 + Math.random() * 3;
+            el.style.animationDuration = dur + 's';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), dur * 1000 + 200);
+        }, i * 110);
+    }
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    clearTimeout(toastTimer);
+    t.textContent = msg;
+    t.classList.add('show');
+    toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── Cursor sparkles ───────────────────────────────────────────────────────────
+const SPARKLE_EMOJIS = ['✨','⭐','💫','🌟','💥','🎊','💜'];
+let sparkleEnabled = false;
+document.addEventListener('mousemove', e => {
+    if (!sparkleEnabled || Math.random() > 0.8) return;
+    const el = document.createElement('span');
+    el.className = 'sparkle';
+    el.textContent = SPARKLE_EMOJIS[Math.floor(Math.random() * SPARKLE_EMOJIS.length)];
+    el.style.left = e.clientX + 'px';
+    el.style.top  = e.clientY + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 900);
+});
+
+function initPage() {
+
+// ════════════════════════════════════════════════
+// GAME LOGIC
+// ════════════════════════════════════════════════
+const _cfg = window._CFG || {};
+const N    = window._CFG_NAME || 'Friend';
+const sub  = str => String(str).replace(/\{name\}/g, N);
+
+const GAME_TARGET = window._GAME_TARGET || 30;
+let gameClicks = 0;
+let gameWon = false;
+
+const gameBtn       = document.getElementById('game-btn');
+const progressFill  = document.getElementById('progress-fill');
+const progressLabel = document.getElementById('progress-label');
+const gameMsg       = document.getElementById('game-msg');
+const gameContainer = document.getElementById('game-container');
+const winScreen     = document.getElementById('win-screen');
+const gameOverlay   = document.getElementById('game-overlay');
+const bdayPage      = document.getElementById('bday-page');
+
+// Milestone messages shown at various click counts
+const _defMilestones = {
+    1:  '👀 Curious...',
+    3:  '🔓 Keep going...',
+    5:  'Not bad. Keep tapping.',
+    8:  '💪 Okay you\'re actually doing it.',
+    10: '1/3 done. Something is stirring... 🌀',
+    13: '👀 Almost halfway there...',
+    15: '🔥 Halfway! Don\'t stop now!',
+    18: '⚡ You can feel it, can\'t you?',
+    20: '2/3 done! SO CLOSE! 🚀',
+    23: '👀 It\'s right there...',
+    25: '🌟 ALMOST... just 5 more!',
+    27: '💥 3... 2...',
+    28: '💥 2...',
+    29: '💥 1 MORE!!!',
+};
+const gameMilestones = _cfg.game?.milestones
+    ? Object.fromEntries(Object.entries(_cfg.game.milestones).map(([k, v]) => [k, sub(v)]))
+    : _defMilestones;
+
+// Button label changes at milestones
+const _defBtnLabels = {
+    0:  'TAP TO UNLOCK',
+    5:  'KEEP GOING...',
+    10: 'YOU GOT THIS!',
+    15: 'ALMOST THERE!',
+    20: 'SOOO CLOSE!!',
+    25: 'LAST FEW!!!',
+    28: 'ALMOST!!!!',
+};
+const btnLabels = _cfg.game?.button_labels
+    ? Object.fromEntries(Object.entries(_cfg.game.button_labels).map(([k, v]) => [k, sub(v)]))
+    : _defBtnLabels;
+
+gameBtn.addEventListener('click', () => {
+    if (gameWon) return;
+    gameClicks++;
+
+    // Shake animation
+    gameBtn.classList.remove('btn-shake');
+    void gameBtn.offsetWidth;
+    gameBtn.classList.add('btn-shake');
+    gameBtn.addEventListener('animationend', () => gameBtn.classList.remove('btn-shake'), { once: true });
+
+    // Glow at high progress
+    if (gameClicks >= 20) gameBtn.classList.add('btn-glow');
+
+    // Update progress
+    const pct = (gameClicks / GAME_TARGET) * 100;
+    progressFill.style.width = pct + '%';
+    progressLabel.textContent = gameClicks + ' / ' + GAME_TARGET;
+
+    // Update button label
+    const thresholds = Object.keys(btnLabels).map(Number).sort((a, b) => b - a);
+    for (const t of thresholds) {
+        if (gameClicks >= t) { gameBtn.textContent = btnLabels[t]; break; }
+    }
+
+    // Milestone message
+    if (gameMilestones[gameClicks]) {
+        gameMsg.style.opacity = '0';
+        setTimeout(() => {
+            gameMsg.textContent = gameMilestones[gameClicks];
+            gameMsg.style.opacity = '1';
+        }, 150);
+    }
+
+    // Mini confetti burst on game btn
+    const r = gameBtn.getBoundingClientRect();
+    spawnConfetti(Math.min(5 + gameClicks, 20),
+        r.left + r.width / 2,
+        r.top  + r.height / 2);
+
+    // WIN
+    if (gameClicks >= GAME_TARGET) {
+        gameWon = true;
+        triggerWin();
+    }
+});
+
+function triggerWin() {
+    // Swap to win screen
+    gameContainer.style.display = 'none';
+    winScreen.style.display = 'flex';
+
+    // Huge confetti
+    spawnConfetti(350);
+    spawnBalloons(16);
+
+    // Wait then reveal birthday page
+    setTimeout(() => {
+        gameOverlay.classList.add('hide');
+        setTimeout(() => {
+            gameOverlay.style.display = 'none';
+            // Change tab title
+            const rName = window._CFG_NAME || 'Friend';
+            document.title = `Happy Birthday, ${rName}! 🎂`;
+            bdayPage.classList.add('revealed');
+            setTimeout(() => {
+                spawnConfetti(200);
+                spawnBalloons(10);
+                showToast(`🎂 HAPPY BIRTHDAY, ${rName.toUpperCase()}!!!`);
+                sparkleEnabled = true;
+            }, 400);
+        }, 900);
+    }, 2000);
+}
+
+// ════════════════════════════════════════════════
+// BIRTHDAY PAGE INTERACTIONS
+// ════════════════════════════════════════════════
+
+// Toast messages — way more of them
+const _defToasts = [
+    `🎂 Cheers, ${N}!`,
+    '🥂 Double cheers!',
+    '🎉 You\'re on a roll!',
+    '💜 Okay, we get it — you love the button.',
+    '🚀 MAXIMUM CELEBRATION ENGAGED',
+    `🌈 ${N}.exe has entered PARTY MODE`,
+    '🎊 Deploying birthday_vibes.tar.gz...',
+    '🧨 This is fine. Everything is fine.',
+    '👾 You broke the party button. Congrats.',
+    '🤖 ERROR 420: Too many cheers. Rebooting...',
+    '📦 npm install good-vibes — ████ 100%',
+    '🐛 Bug found: you cannot stop clicking. That\'s a feature, not a bug.',
+    '💡 Fun fact: Anno 1800 cities don\'t build themselves. Neither did this party.',
+    '🎮 Achievement unlocked: Serial Celebrator',
+    '🦆 A wild rubber duck appeared! Debug later.',
+    '☕ No breaks. More clicking.',
+    '🏗️ City build status: FLAWLESS. As always.',
+    '🇦🇹 Austrian engineering at its finest.',
+    '⭐ This button deserves a GitHub star.',
+    '🎵 *cue the bangers*',
+    '🔥 Hot deploy incoming... to your heart.',
+    `🌍 ${N} appreciation post going viral in 3... 2... 1...`,
+    '💾 Saving best memories... ████████░░ 80%',
+    '🎯 You were clickbaited. By love.',
+    '🎁 The real gift was the clicks we made along the way.',
+    '🛡️ No bugs on your birthday. That\'s an order.',
+    '🚢 git push --force birthday',
+    '📋 TODO: have an amazing day. Status: ✅ Done.',
+    '🎤 Drop the code and celebrate!!',
+    '💻 Ctrl+Z won\'t undo how awesome you are.',
+    `⚡ ${N}.speed = Infinity`,
+    '🌊 Riding the Anno trade routes on your birthday.',
+    '🏆 TypeScript would give this button a perfect type.',
+    '🎲 RNG seed: best_birthday_ever',
+    '🧠 Big brain. Big heart. Big birthday.',
+    '🔮 The future is bright — and full of confetti.',
+    '🚁 Happy Birthday from 30,000 ft of fun.',
+    '🌺 Side quest completed: being absolutely amazing.',
+    '🥳 This level of celebration is unprecedented.',
+    `🎸 Rock on, ${N}. Rock on.`,
+];
+const toastMessages = Array.isArray(_cfg.toast_messages)
+    ? _cfg.toast_messages.map(sub)
+    : _defToasts;
+
+const btn        = document.getElementById('cheers-btn');
+const secretMsg  = document.getElementById('secret-msg');
+const nameSpan   = document.getElementById('name-span');
+let clickCount   = 0;
+
+btn.addEventListener('click', () => {
+    const rect = btn.getBoundingClientRect();
+    const cx   = rect.left + rect.width / 2;
+    const cy   = rect.top  + rect.height / 2;
+    clickCount++;
+
+    showToast(toastMessages[(clickCount - 1) % toastMessages.length]);
+    spawnConfetti(Math.min(40 + clickCount * 18, 240), cx, cy);
+    spawnBalloons(Math.min(clickCount, 8));
+
+    if (clickCount >= 3)  nameSpan.classList.add('rainbow-active');
+    if (clickCount === 5) { btn.classList.add('btn-chaos'); showToast('✨ Sparkle mode ON — move your mouse!'); }
+    if (clickCount === 8) {
+        secretMsg.style.display = 'block';
+        secretMsg.textContent = window._CFG_SECRET || '🎁 Secret unlocked! You already beat the game AND found this. Have the best birthday ever! 🎉';
+        spawnConfetti(300);
+        spawnBalloons(14);
+    }
+    const _chaosLabels = Array.isArray(_cfg.chaos_labels)
+        ? _cfg.chaos_labels.map(sub)
+        : [`🎉 PARTY!`, `🥳 WOOO!`, `💜 ${N.toUpperCase()}!`, `🚀 GO GO GO!`, `🎊 YEAH!`, `🔥 LET'S GO!`];
+    if (clickCount >= 12) btn.textContent = _chaosLabels[clickCount % _chaosLabels.length];
+});
+
+// Profile click
+const profileRing = document.getElementById('profile-ring');
+let profileClicks = 0;
+const _defProfileMsgs = [
+    `👋 Hey, that's ${N}!`,
+    '😄 Hehe, stop poking me!',
+    '🙈 Okay okay, I see you.',
+    `🎩 Did you know ${N} is awesome?`,
+    '💻 Currently busy building cool OSS stuff!',
+    '🎮 Or maybe in a Fortnite game right now...',
+    '🏙️ Building the perfect Anno trade route.',
+    '🇦🇹 Grüß Gott from Austria!',
+    '🌟 One of the rare actually cool devs.',
+    `🥳 HAPPY BIRTHDAY ${N.toUpperCase()}!!!`,
+    '💜 Okay you can stop now. Or don\'t. I\'m a picture.',
+];
+const profileMessages = Array.isArray(_cfg.profile_messages)
+    ? _cfg.profile_messages.map(sub)
+    : _defProfileMsgs;
+profileRing.addEventListener('click', () => {
+    const img = document.getElementById('profile-img');
+    img.classList.remove('profile-wiggle');
+    void img.offsetWidth;
+    img.classList.add('profile-wiggle');
+    img.addEventListener('animationend', () => img.classList.remove('profile-wiggle'), { once: true });
+    showToast(profileMessages[profileClicks % profileMessages.length]);
+    profileClicks++;
+    const r = profileRing.getBoundingClientRect();
+    spawnConfetti(35, r.left + r.width / 2, r.top + r.height / 2);
+});
+
+// Nav icons
+document.getElementById('icon-celebration').addEventListener('click', function () {
+    this.classList.remove('icon-bounce'); void this.offsetWidth; this.classList.add('icon-bounce');
+    this.addEventListener('animationend', () => this.classList.remove('icon-bounce'), { once: true });
+    const r = this.getBoundingClientRect();
+    spawnConfetti(70, r.left + r.width / 2, r.top + r.height / 2);
+    spawnBalloons(5);
+    showToast('🎊 Celebration mode activated!');
+});
+document.getElementById('icon-cake').addEventListener('click', function () {
+    this.classList.remove('icon-bounce'); void this.offsetWidth; this.classList.add('icon-bounce');
+    this.addEventListener('animationend', () => this.classList.remove('icon-bounce'), { once: true });
+    showToast(`🎂 Make a wish, ${window._CFG_NAME || 'Friend'}!`);
+    spawnBalloons(5);
+    spawnConfetti(40);
+});
+
+} // end initPage</script>
+
+</body>
+</html>
